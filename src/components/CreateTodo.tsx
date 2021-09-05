@@ -1,13 +1,15 @@
-import { useState } from 'react';
+
+import React, { useState, FunctionComponent } from 'react';
+import { TodoType } from '../types';
 import { isOnlySpaces } from '../utils';
-export function CreateTodo({ onAddTodo }) {
+export const CreateTodo: FunctionComponent<CreateTodoProps> = ({ onAddTodo }) => {
 	const [input, setInput] = useState('');
-	function onChange(e) {
+	function onChange(e: React.ChangeEvent<HTMLInputElement>) {
 		setInput(e.target.value);
 	}
 
-	function handleKeyDown(e) {
-		if (e.keyCode === 13 && !isSubmitDisabled()) {
+	function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+		if (e.code === 'Enter' && !isSubmitDisabled()) {
 			onSubmit();
 		}
 	}
@@ -31,3 +33,6 @@ export function CreateTodo({ onAddTodo }) {
 		</>);
 }
 
+type CreateTodoProps = {
+	onAddTodo: (todo: TodoType) => void
+}

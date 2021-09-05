@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import React, { useState, FunctionComponent } from 'react';
+import { TodoType } from '../types';
 import { isOnlySpaces } from '../utils';
 
-export function Todo({ todo, deleteTodo, editTodo, setTodoComplete, index }) {
+export const Todo:FunctionComponent<TodoProps> = ({ todo, deleteTodo, editTodo, setTodoComplete, index }) => {
 	const defaultState = {
 		editting: false,
-		editValue: null
+		editValue: undefined
 	};
-	const [state, setState] = useState(defaultState);
+	const [state, setState] = useState<State>(defaultState);
 
 	function onClickEdit() {
 		setState({ ...state, editting: true, editValue: todo.todo });
@@ -14,11 +15,11 @@ export function Todo({ todo, deleteTodo, editTodo, setTodoComplete, index }) {
 	function onClickDelete() {
 		deleteTodo(index);
 	}
-	function onChange(e) {
+	function onChange(e: React.ChangeEvent<HTMLInputElement>) {
 		setState({ ...state, editValue: e.target.value })
 	}
 	function onSave() {
-		editTodo(index, state.editValue);
+		editTodo(index, state.editValue as string);
 		setState(defaultState);
 	}
 
@@ -26,8 +27,8 @@ export function Todo({ todo, deleteTodo, editTodo, setTodoComplete, index }) {
 		setState({ ...state, editting: false });
 	}
 
-	function handleKeyDown(e) {
-		if (e.keyCode === 13) {
+	function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+		if (e.code === 'Enter') {
 			onSave();
 		}
 	}
@@ -65,4 +66,17 @@ export function Todo({ todo, deleteTodo, editTodo, setTodoComplete, index }) {
 		<>
 			{state.editting ? getEditView() : getStaticView()}
 		</>);
+}
+
+type TodoProps = {
+	todo: TodoType,
+	deleteTodo: (index: number)=> void,
+	editTodo: (index: number, value: string) => void,
+	setTodoComplete: (index: number, isComplete: boolean) => void,
+	index: number
+}
+
+type State = {
+	editting: boolean,
+	editValue: undefined | string
 }

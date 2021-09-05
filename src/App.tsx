@@ -1,14 +1,16 @@
+import React from 'react';
 import { useState } from 'react';
-import { CreateTodo, Todos, Filters } from './components';
-import { FILTER_TYPES } from './types/filter.types';
-function App() {
-  const [state, setState] = useState({
+import { CreateTodo, Todos, Filters, FILTER_TYPES } from './components';
+import { TodoType } from './types';
+
+export const App = () => {
+  const [state, setState] = useState<State>({
     todoList: [],
     filteredList: [],
     filter: FILTER_TYPES.ALL
   });
 
-  function setFilteredList(type) {
+  function setFilteredList(type: symbol) {
     setState({
       ...state,
       filteredList: getFilteredList(state.todoList, type),
@@ -16,30 +18,30 @@ function App() {
     });
   }
 
-  function getFilteredList(list = state.todoList, newFilter) {
+  function getFilteredList(list = state.todoList, newFilter?: symbol) {
     console.log(newFilter);
     const filter = newFilter || state.filter;
     switch (filter) {
       case FILTER_TYPES.ALL:
         return list;
       case FILTER_TYPES.ACTIVE:
-        return list.filter((todo) => !todo.complete);
+        return list.filter((todo: TodoType) => !todo.complete);
       case FILTER_TYPES.COMPLETE:
-        return list.filter((todo) => todo.complete);
+        return list.filter((todo: TodoType) => todo.complete);
       default:
         throw new Error('Not using a genuine filter!');
     }
   }
 
-  function addTodo(todo) {
-    const newList = state.todoList.concat(todo);
+  function addTodo(todo: TodoType) {
+    const newList = state.todoList.concat([todo]);
     setState({
       ...state,
       todoList: newList,
       filteredList: getFilteredList(newList)
     });
   }
-  function deleteTodo(index) {
+  function deleteTodo(index: number) {
     const todoListCopy = [...state.todoList];
     todoListCopy.splice(index, 1);
     setState({
@@ -49,7 +51,7 @@ function App() {
     })
   }
 
-  function editTodo(index, value) {
+  function editTodo(index: number, value: string) {
     const todoListCopy = [...state.todoList];
     todoListCopy[index].todo = value;
     setState({
@@ -58,7 +60,7 @@ function App() {
     })
   }
 
-  function setTodoComplete(index, isComplete) {
+  function setTodoComplete(index: number, isComplete: boolean) {
     console.log(getFilteredList())
     const todoListCopy = [...state.todoList];
     todoListCopy[index].complete = isComplete;
@@ -79,4 +81,8 @@ function App() {
   );
 }
 
-export default App;
+type State = {
+  todoList: Array<TodoType>,
+  filteredList: Array<TodoType>,
+  filter: symbol
+}
