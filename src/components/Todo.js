@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { isOnlySpaces } from '../utils';
 
-function Todo({ todoValue, deleteTodo, editTodo, index }) {
+export function Todo({ todo, deleteTodo, editTodo, setTodoComplete, index }) {
 	const defaultState = {
 		editting: false,
 		editValue: null
@@ -8,7 +9,7 @@ function Todo({ todoValue, deleteTodo, editTodo, index }) {
 	const [state, setState] = useState(defaultState);
 
 	function onClickEdit() {
-		setState({ ...state, editting: true, editValue: todoValue });
+		setState({ ...state, editting: true, editValue: todo.todo });
 	}
 	function onClickDelete() {
 		deleteTodo(index);
@@ -31,20 +32,30 @@ function Todo({ todoValue, deleteTodo, editTodo, index }) {
 		}
 	}
 
+	function onCheckboxClicked() {
+		setTodoComplete(index, !todo.complete)
+	}
+
 	function getStaticView() {
 		return (
 			<>
-				<p >{todoValue}</p>
+				<p >{todo.todo}</p>
+				<input type="checkbox" id="todo-checkbox" checked={todo.complete} onChange={onCheckboxClicked} />
 				<button type='submit' onClick={onClickEdit}>Edit</button>
 				<button type='submit' onClick={onClickDelete}>Delete</button>
 			</>
 		);
 	}
+
+	function isSaveDisabled() {
+		return isOnlySpaces(state.editValue);
+	}
+
 	function getEditView() {
 		return (
 			<>
 				<input type="text" id="todo-edit-input" onChange={onChange} onKeyDown={handleKeyDown} value={state.editValue}></input>
-				<button type='submit' onClick={onSave}>Save</button>
+				<button type='submit' onClick={onSave} disabled={isSaveDisabled()}>Save</button>
 				<button type='submit' onClick={onClickCancel}>Cancel</button>
 			</>
 		);
@@ -55,5 +66,3 @@ function Todo({ todoValue, deleteTodo, editTodo, index }) {
 			{state.editting ? getEditView() : getStaticView()}
 		</>);
 }
-
-export default Todo;
