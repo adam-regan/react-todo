@@ -1,8 +1,31 @@
 import React, { useState, FunctionComponent } from 'react';
+import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import { TodoType } from '../types';
 import { isOnlySpaces } from '../utils';
+import { SmallButton } from '../styles/Button';
 
-export const Todo:FunctionComponent<TodoProps> = ({ todo, deleteTodo, editTodo, setTodoComplete, index }) => {
+
+const useStyles = makeStyles((theme: Theme) =>
+	createStyles({
+		root: {
+			display: 'flex',
+			flexDirection: 'row',
+			alignItems: 'center',
+			minHeight: 50,
+			backgroundColor: 'white',
+			borderRadius: '5px',
+			marginTop: '2px',
+			marginBottom: '2px',
+		},
+			content: {
+				display: 'flex',
+				justifyContent: 'space-between',
+				width: '386px'
+			}
+	}));
+
+export const Todo: FunctionComponent<TodoProps> = ({ todo, deleteTodo, editTodo, setTodoComplete, index }) => {
+	const classes = useStyles();
 	const defaultState = {
 		editting: false,
 		editValue: undefined
@@ -39,12 +62,16 @@ export const Todo:FunctionComponent<TodoProps> = ({ todo, deleteTodo, editTodo, 
 
 	function getStaticView() {
 		return (
-			<>
-				<p >{todo.todo}</p>
-				<input type="checkbox" id="todo-checkbox" checked={todo.complete} onChange={onCheckboxClicked} />
-				<button type='submit' onClick={onClickEdit}>Edit</button>
-				<button type='submit' onClick={onClickDelete}>Delete</button>
-			</>
+			<div className={classes.content}>
+				<div className={classes.root}>
+					<input type="checkbox" id="todo-checkbox" checked={todo.complete} onChange={onCheckboxClicked} />
+					<p >{todo.todo}</p>
+				</div>
+				<div className={classes.root}>
+					<SmallButton type='submit' onClick={onClickEdit}>Edit</SmallButton>
+					<SmallButton type='submit' onClick={onClickDelete}>Delete</SmallButton>
+				</div>
+			</div>
 		);
 	}
 
@@ -54,23 +81,27 @@ export const Todo:FunctionComponent<TodoProps> = ({ todo, deleteTodo, editTodo, 
 
 	function getEditView() {
 		return (
-			<>
-				<input type="text" id="todo-edit-input" onChange={onChange} onKeyDown={handleKeyDown} value={state.editValue}></input>
-				<button type='submit' onClick={onSave} disabled={isSaveDisabled()}>Save</button>
-				<button type='submit' onClick={onClickCancel}>Cancel</button>
-			</>
+			<div className={classes.content}>
+				<div>
+					<input type="text" id="todo-edit-input" onChange={onChange} onKeyDown={handleKeyDown} value={state.editValue}></input>
+				</div>
+				<div>
+					<SmallButton type='submit' onClick={onSave} disabled={isSaveDisabled()}>Save</SmallButton>
+					<SmallButton type='submit' onClick={onClickCancel}>Cancel</SmallButton>
+				</div>
+			</div>
 		);
 	}
 
 	return (
-		<>
+		<div className={classes.root}>
 			{state.editting ? getEditView() : getStaticView()}
-		</>);
+		</div>);
 }
 
 type TodoProps = {
 	todo: TodoType,
-	deleteTodo: (index: number)=> void,
+	deleteTodo: (index: number) => void,
 	editTodo: (index: number, value: string) => void,
 	setTodoComplete: (index: number, isComplete: boolean) => void,
 	index: number
